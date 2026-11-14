@@ -21,6 +21,8 @@ public class drive extends OpMode {
     // This declares the IMU needed to get the current direction the robot is facing
     IMU imu;
 
+    private ScoringHardware scoring;
+
     @Override
     public void init() {
         frontLeftDrive = hardwareMap.get(DcMotor.class, "driveFrontLeft");
@@ -50,6 +52,8 @@ public class drive extends OpMode {
         RevHubOrientationOnRobot orientationOnRobot = new
                 RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        scoring = new ScoringHardware(hardwareMap);
     }
 
     @Override
@@ -70,6 +74,20 @@ public class drive extends OpMode {
             driveBot(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else {
             driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        }
+
+        // Scoring controls
+        scoring.update(
+                gamepad1.x || gamepad2.x,
+                gamepad1.right_bumper || gamepad2.right_bumper,
+                gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2,
+                gamepad1.y || gamepad2.y);
+    }
+
+    @Override
+    public void stop() {
+        if (scoring != null) {
+            scoring.stop();
         }
     }
 
