@@ -10,7 +10,6 @@ final class ScoringHardware {
     private static final double INTAKE_POWER = 0.5;
     private static final double TRANSFER_POWER = 0.4;
     private static final double REVERSE_POWER = -0.25;
-    private static final double TRIGGER_DEADBAND = 0.1;
 
     private final DcMotor intake;
     private final DcMotor transfer;
@@ -26,7 +25,7 @@ final class ScoringHardware {
         stop();
     }
 
-    double update(double intakeTrigger, boolean spin, boolean feed, boolean clearJam) {
+    double update(boolean intakeHeld, boolean spin, boolean feed, boolean clearJam) {
         double velocity = shooter.getVelocity();
         if (clearJam) {
             shooter.setPower(0);
@@ -43,7 +42,7 @@ final class ScoringHardware {
 
         boolean readyToFeed = spin && feed && atSpeed(velocity);
         transfer.setPower(readyToFeed ? TRANSFER_POWER : 0);
-        intake.setPower(intakeTrigger > TRIGGER_DEADBAND ? intakeTrigger * INTAKE_POWER : 0);
+        intake.setPower(intakeHeld ? INTAKE_POWER : 0);
         return velocity;
     }
 

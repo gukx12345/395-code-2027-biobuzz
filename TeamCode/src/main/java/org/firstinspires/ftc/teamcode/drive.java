@@ -59,10 +59,10 @@ public class drive extends OpMode {
         telemetry.addLine("Press A to reset Yaw");
         telemetry.addLine("Hold left bumper to drive in robot relative");
         telemetry.addLine("The left joystick sets the robot direction");
-        telemetry.addLine("RT: intake | RB: spin up | LT: feed | Y: clear jam");
-        telemetry.addLine("Hold right stick button for slow drive");
+        telemetry.addLine("Moving the right joystick left and right turns the robot");
+        telemetry.addLine("X: intake | RB: spin up | LT: feed | Y: clear jam");
         double shooterVelocity = scoring.update(
-                gamepad1.right_trigger, gamepad1.right_bumper,
+                gamepad1.x, gamepad1.right_bumper,
                 gamepad1.left_trigger > 0.2, gamepad1.y);
         telemetry.addData("Shooter speed (ticks/s)", "%.0f / %.0f",
                 shooterVelocity, ScoringHardware.TARGET_TICKS_PER_SECOND);
@@ -120,7 +120,7 @@ public class drive extends OpMode {
 
         double maxPower = 1.0;
         double maxSpeed=1.0;
-        if (gamepad1.right_stick_button) {
+        if (gamepad1.right_trigger_pressed) {
             maxSpeed = 0.5;
         }
 
