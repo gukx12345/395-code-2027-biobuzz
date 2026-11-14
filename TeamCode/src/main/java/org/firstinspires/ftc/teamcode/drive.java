@@ -20,7 +20,6 @@ public class drive extends OpMode {
 
     // This declares the IMU needed to get the current direction the robot is facing
     IMU imu;
-    private ScoringHardware scoring;
 
     @Override
     public void init() {
@@ -51,7 +50,6 @@ public class drive extends OpMode {
         RevHubOrientationOnRobot orientationOnRobot = new
                 RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-        scoring = new ScoringHardware(hardwareMap);
     }
 
     @Override
@@ -60,15 +58,6 @@ public class drive extends OpMode {
         telemetry.addLine("Hold left bumper to drive in robot relative");
         telemetry.addLine("The left joystick sets the robot direction");
         telemetry.addLine("Moving the right joystick left and right turns the robot");
-        telemetry.addLine("X: intake | RB: spin up | LT: feed | Y: clear jam");
-        double shooterVelocity = scoring.update(
-                gamepad1.x, gamepad1.right_bumper,
-                gamepad1.left_trigger > 0.2, gamepad1.y);
-        telemetry.addData("Shooter speed (ticks/s)", "%.0f / %.0f",
-                shooterVelocity, ScoringHardware.TARGET_TICKS_PER_SECOND);
-        telemetry.addData("Ready to feed",
-                gamepad1.right_bumper && !gamepad1.y
-                        && ScoringHardware.atSpeed(shooterVelocity));
 
         // If you press the A button, then you reset the Yaw to be zero from the way
         // the robot is currently pointing
@@ -81,13 +70,6 @@ public class drive extends OpMode {
             driveBot(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else {
             driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-        }
-    }
-
-    @Override
-    public void stop() {
-        if (scoring != null) {
-            scoring.stop();
         }
     }
 
