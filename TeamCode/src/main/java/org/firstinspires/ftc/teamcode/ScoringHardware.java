@@ -2,19 +2,34 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 final class ScoringHardware {
     // Bench tuning values
-    static final double INTAKE_POWER = 0.5;
-    static final double TRANSFER_POWER = 0.4;
-    static final double REVERSE_POWER = -0.25;
-    static final double SHOOTER_POWER = 0.5;
+    static final double INTAKE_POWER = 0.5; // UNTESTED
+    static final double TRANSFER_POWER = 0.4; // UNTESTED
+    static final double REVERSE_POWER = -0.25; // UNTESTED
+    static final double SHOOTER_POWER = 0.5; // UNTESTED
 
+    static final double FLOWER_LEFT_UP = 0.5; // UNTESTED
+    static final double FLOWER_RIGHT_UP = 0.5; // UNTESTED
+    static final double FLOWER_LEFT_BLOCK = 0.5; // UNTESTED
+    static final double FLOWER_RIGHT_BLOCK = 0.5; // UNTESTED
+    static final double FLOWER_LEFT_INTAKE = 0.5; // UNTESTED
+    static final double FLOWER_RIGHT_INTAKE = 0.5; // UNTESTED
+    static final double OUTTAKE_BLOCKER_BLOCKING = 0.5; // UNTESTED
+    static final double OUTTAKE_BLOCKER_SHOOTING = 0.5; // UNTESTED
+
+    private final HardwareMap hardwareMap;
+    private Servo flowerLeft;
+    private Servo flowerRight;
+    private Servo outtakeBlocker;
     private final DcMotor intake;
     private final DcMotor transfer;
     private final DcMotor shooter;
 
     ScoringHardware(HardwareMap hardwareMap) {
+        this.hardwareMap = hardwareMap;
         intake = hardwareMap.get(DcMotor.class, "intake");
         transfer = hardwareMap.get(DcMotor.class, "transfer");
         shooter = hardwareMap.get(DcMotor.class, "shooter");
@@ -40,6 +55,47 @@ final class ScoringHardware {
         shooter.setPower(shooterPower);
         intake.setPower(intakePower);
         transfer.setPower(transferPower);
+    }
+
+    private void initFlower() {
+        if (flowerLeft == null || flowerRight == null) {
+            flowerLeft = hardwareMap.get(Servo.class, "flowerLeft");
+            flowerRight = hardwareMap.get(Servo.class, "flowerRight");
+        }
+    }
+
+    private void initOuttakeBlocker() {
+        if (outtakeBlocker == null) {
+            outtakeBlocker = hardwareMap.get(Servo.class, "outtakeBlocker");
+        }
+    }
+
+    void flowerUp() {
+        initFlower();
+        flowerLeft.setPosition(FLOWER_LEFT_UP);
+        flowerRight.setPosition(FLOWER_RIGHT_UP);
+    }
+
+    void flowerBlock() {
+        initFlower();
+        flowerLeft.setPosition(FLOWER_LEFT_BLOCK);
+        flowerRight.setPosition(FLOWER_RIGHT_BLOCK);
+    }
+
+    void flowerIntake() {
+        initFlower();
+        flowerLeft.setPosition(FLOWER_LEFT_INTAKE);
+        flowerRight.setPosition(FLOWER_RIGHT_INTAKE);
+    }
+
+    void blockerBlock() {
+        initOuttakeBlocker();
+        outtakeBlocker.setPosition(OUTTAKE_BLOCKER_BLOCKING);
+    }
+
+    void blockerShoot() {
+        initOuttakeBlocker();
+        outtakeBlocker.setPosition(OUTTAKE_BLOCKER_SHOOTING);
     }
 
     void stop() {
