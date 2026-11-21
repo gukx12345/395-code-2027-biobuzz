@@ -22,6 +22,9 @@ public class drive extends OpMode {
     IMU imu;
 
     private ScoringHardware scoring;
+    boolean shooterOn = false;
+    boolean robotCentric = false;
+    boolean halfSpeed=false;
 
     @Override
     public void init() {
@@ -50,23 +53,22 @@ public class drive extends OpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         // This needs to be changed to match the orientation on your robot
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.UP;
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         RevHubOrientationOnRobot orientationOnRobot = new
                 RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         scoring = new ScoringHardware(hardwareMap);
+
+
     }
 
     @Override
     public void loop() {
-        telemetry.addLine("Press A to reset Yaw");
-        telemetry.addLine("Hold left bumper to drive in robot relative");
-        telemetry.addLine("The left joystick sets the robot direction");
-        telemetry.addLine("Moving the right joystick left and right turns the robot");
+
 
         // If you press the A button, then you reset the Yaw to be zero from the way
         // the robot is currently pointing
@@ -75,18 +77,47 @@ public class drive extends OpMode {
         }
         // If you press the left bumper, you get a drive from the point of view of the robot
         // (much like driving an RC vehicle)
-        if (gamepad1.left_bumper) {
+
+        if (gamepad1.leftBumperWasPressed()){
+            robotCentric = !robotCentric;
+        }
+
+        if (robotCentric) {
             driveBot(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            telemetry.addLine("ROBOT centric");
         } else {
             driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            telemetry.addLine("FIELD centric");
         }
+
+
+        //makes the shooter a toggle based on the Y button
+        if (shooterOn){
+            if (gamepad1.yWasPressed() || gamepad2.yWasPressed()){
+                shooterOn=false;
+            }
+        }else {
+            if (gamepad1.yWasPressed() || gamepad2.yWasPressed()) {
+                shooterOn = true;
+            }
+        }
+
 
         // Scoring controls
         scoring.update(
-                gamepad1.x || gamepad2.x,
-                gamepad1.right_bumper || gamepad2.right_bumper,
-                gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2,
-                gamepad1.y || gamepad2.y);
+                gamepad1.left_trigger_pressed || gamepad2.left_trigger_pressed,
+                shooterOn,
+                gamepad1.right_trigger_pressed || gamepad2.left_trigger_pressed,
+                gamepad1.x || gamepad2.x);
+
+        if (gamepad1.dpad_down || gamepad2.dpad_down){
+            scoring.flowerIntake();
+        } else if (gamepad1.dpad_right || gamepad2.dpad_right){
+            scoring.flowerBlock();
+        } else if (gamepad1.dpad_up || gamepad2.dpad_up){
+            scoring.flowerUp();
+        }
+
     }
 
     @Override
@@ -123,10 +154,17 @@ public class drive extends OpMode {
         double backRightPower = forward + right - rotate;
         double backLeftPower = forward - right + rotate;
 
+
+        if (gamepad1.rightBumperWasPressed()){
+            halfSpeed = !halfSpeed;
+        }
         double maxPower = 1.0;
-        double maxSpeed=1.0;
-        if (gamepad1.right_trigger_pressed) {
-            maxSpeed = 0.5;
+        double maxSpeed = 1;
+        if(halfSpeed){
+            maxSpeed=0.5;
+            telemetry.addLine("HALF speed");
+        }else{
+            telemetry.addLine("FULL speed");
         }
 
 
