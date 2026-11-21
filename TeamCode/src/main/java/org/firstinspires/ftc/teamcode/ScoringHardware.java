@@ -1,22 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 final class ScoringHardware {
     // Bench tuning values
+    static final double rightOffset=0.04;
     static final double INTAKE_POWER = 0.8;
     static final double TRANSFER_POWER = 0.4; // UNTESTED, may work best if we just use intake value, this is an alternative for slower fire rate
     static final double REVERSE_POWER = -0.5; // UNTESTED
-    static final double SHOOTER_POWER = 0.5; // UNTESTED NEEDS TUNING
+    static final double SHOOTER_POWER = 1100; // UNTESTED NEEDS TUNING
+    boolean alreadyShooter = false;
 
-    static final double FLOWER_LEFT_UP = 0.5; // UNTESTED
-    static final double FLOWER_RIGHT_UP = 0.5; // UNTESTED
-    static final double FLOWER_LEFT_BLOCK = 0.5; // UNTESTED
-    static final double FLOWER_RIGHT_BLOCK = 0.5; // UNTESTED
-    static final double FLOWER_LEFT_INTAKE = 0.5; // UNTESTED
-    static final double FLOWER_RIGHT_INTAKE = 0.5; // UNTESTED
+    static final double FLOWER_LEFT_UP = .2; // UNTESTED
+    static final double FLOWER_RIGHT_UP = .8+rightOffset; // UNTESTED
+    static final double FLOWER_LEFT_BLOCK = 0.4; // UNTESTED
+    static final double FLOWER_RIGHT_BLOCK = 0.6+rightOffset; // UNTESTED
+    static final double FLOWER_LEFT_INTAKE = .775; // UNTESTED
+    static final double FLOWER_RIGHT_INTAKE = .225+rightOffset; // UNTESTED
     static final double OUTTAKE_BLOCKER_BLOCKING = 0.5; // UNTESTED
     static final double OUTTAKE_BLOCKER_SHOOTING = 0.5; // UNTESTED
 
@@ -24,20 +28,23 @@ final class ScoringHardware {
     private Servo flowerLeft;
     private Servo flowerRight;
     private Servo outtakeBlocker;
-    private final DcMotor intake;
+    final DcMotor intake;
 //    private final DcMotor transfer;
-    private final DcMotor shooter;
+    private final DcMotorEx shooter;
 
     ScoringHardware(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         intake = hardwareMap.get(DcMotor.class, "intake");
 //        transfer = hardwareMap.get(DcMotor.class, "transfer");
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
 
         stop();
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); we don't have a transfer motor
-        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(500,0,0,10);
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
+
         shooter.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.REVERSE);
     }
@@ -54,7 +61,16 @@ final class ScoringHardware {
     }
 
     void setPowers(double intakePower, double transferPower, double shooterPower) {
-        shooter.setPower(shooterPower);
+        if (!alreadyShooter){
+            shooter.setVelocity(shooterPower);
+
+        }
+
+        if (shooterPower>1){
+            alreadyShooter=true;
+        }else{
+            alreadyShooter=false;
+        }
         intake.setPower(intakePower);
         if (transferPower != 0){
             intake.setPower(transferPower);

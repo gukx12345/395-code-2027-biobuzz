@@ -27,7 +27,7 @@ public class newAuto extends LinearOpMode {
     private final PoseFactory poseFactory = PoseFactory.degrees();
     private ScoringHardware scoring;
 
-    private final Pose start = poseFactory.of(58.9203, 9.3274, 90);
+    private final Pose start = poseFactory.of(58.9203, 9.3274, 270);
     private final Pose path1 = poseFactory.of(12.1957, 68.4047, 360);
     private final Pose path1Control1 = poseFactory.of(24.114, 28.1834, 0);
     private final Pose path1Control2 = poseFactory.of(18.0118, 56.9881, 0);
@@ -35,7 +35,7 @@ public class newAuto extends LinearOpMode {
     private final Pose path1Segment1End = poseFactory.of(12.1957, 68.4047, 0);
     private final Pose point2 = poseFactory.of(12.3138, 73.712, 0);
     private final Pose point3 = poseFactory.of(30.6956, 73.9485, 0.7369);
-    private final Pose point4 = poseFactory.of(9.1967, 123.9084, 0);
+    private final Pose point4 = poseFactory.of(9.1967, 115, 0);
     private final Pose point4Control1 = poseFactory.of(39.068, 141.5, 0);
 
     // Autonomous routine
@@ -58,10 +58,11 @@ public class newAuto extends LinearOpMode {
         follower.setPose(start);
         follower.update();
 
+
         waitForStart();
 
         //shoots balls stupidly
-
+        scoring.flowerUp();
         scoring.update(false,true,false,false);
         sleep(5000);
         scoring.update(true,true,false,false);

@@ -92,14 +92,22 @@ public class drive extends OpMode {
 
 
         //makes the shooter a toggle based on the Y button
-        if (shooterOn){
-            if (gamepad1.yWasPressed() || gamepad2.yWasPressed()){
-                shooterOn=false;
-            }
-        }else {
-            if (gamepad1.yWasPressed() || gamepad2.yWasPressed()) {
-                shooterOn = true;
-            }
+//        if (shooterOn){
+//            if (gamepad1.yWasPressed() || gamepad2.yWasPressed()){
+//                shooterOn=false;
+//            }
+//        }else {
+//            if (gamepad1.yWasPressed() || gamepad2.yWasPressed()) {
+//                shooterOn = true;
+//            }
+//        }
+
+        if (gamepad1.y || gamepad2.y){
+            shooterOn=true;
+        }
+
+        if (gamepad1.b || gamepad2.b){
+            shooterOn=false;
         }
 
 
