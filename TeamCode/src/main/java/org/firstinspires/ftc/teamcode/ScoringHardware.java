@@ -13,7 +13,6 @@ final class ScoringHardware {
     static final double TRANSFER_POWER = 0.4; // UNTESTED, may work best if we just use intake value, this is an alternative for slower fire rate
     static final double REVERSE_POWER = -0.5; // UNTESTED
     static final double SHOOTER_POWER = 1100; // UNTESTED NEEDS TUNING
-    boolean alreadyShooter = false;
 
     static final double FLOWER_LEFT_UP = .2; // UNTESTED
     static final double FLOWER_RIGHT_UP = .8+rightOffset; // UNTESTED
@@ -61,16 +60,7 @@ final class ScoringHardware {
     }
 
     void setPowers(double intakePower, double transferPower, double shooterPower) {
-        if (!alreadyShooter){
-            shooter.setVelocity(shooterPower);
-
-        }
-
-        if (shooterPower>1){
-            alreadyShooter=true;
-        }else{
-            alreadyShooter=false;
-        }
+        shooter.setVelocity(shooterPower);
         intake.setPower(intakePower);
         if (transferPower != 0){
             intake.setPower(transferPower);
