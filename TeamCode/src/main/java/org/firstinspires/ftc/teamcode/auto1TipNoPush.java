@@ -72,6 +72,7 @@ public class auto1TipNoPush extends LinearOpMode {
 
             telemetry.update();
         }
+        OpModeStorage.autonomousEndPose = follower.pose();
     }
 
     public Path path1() {

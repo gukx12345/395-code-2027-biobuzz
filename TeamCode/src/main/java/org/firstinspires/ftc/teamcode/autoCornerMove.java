@@ -58,6 +58,7 @@ public class autoCornerMove extends LinearOpMode {
 
             telemetry.update();
         }
+        OpModeStorage.autonomousEndPose = follower.pose();
     }
 
     public Path path1() {
